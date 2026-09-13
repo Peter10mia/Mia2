@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090d">
+<title>Mia 2.0 – Schritt 10</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#07070b;color:#eee;font-family:Arial,sans-serif}
+body{display:flex;justify-content:center}.app{width:100%;max-width:560px;height:100dvh;min-height:100vh;background:#0c0b10;display:flex;flex-direction:column;overflow:hidden}
+header{flex:0 0 auto;padding:14px 16px;border-bottom:1px solid #29212f;display:flex;align-items:center;gap:12px}.avatar{width:46px;height:46px;flex:none;border-radius:50%;background:linear-gradient(135deg,#ff4fa3,#7138ff);display:flex;align-items:center;justify-content:center;font-size:22px}
+h1{font-size:19px;margin:0}.status{font-size:12px;color:#aaa;margin-top:3px}
+.screen{display:none;flex:1;min-height:0;overflow:hidden}.screen.active{display:flex;flex-direction:column}
+#messages{flex:1;min-height:0;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:84%;padding:11px 14px;border-radius:18px;line-height:1.45;font-size:15px;white-space:pre-wrap;word-break:break-word}.bubble.mia{align-self:flex-start;background:#211a27;border:1px solid #3a2940;border-bottom-left-radius:5px}.bubble.user{align-self:flex-end;background:#b72e72;border-bottom-right-radius:5px}.bubble b{font-size:11px;opacity:.75}
+.composer{flex:0 0 auto;padding:9px 11px;border-top:1px solid #29212f;display:flex;gap:8px;background:#0d0c11}#msg{flex:1;min-width:0;border:1px solid #392b3b;background:#17151b;color:white;border-radius:24px;padding:12px 15px;font-size:16px;outline:none}#send,#mic{width:48px;height:48px;flex:none;position:relative;z-index:20;cursor:pointer;touch-action:manipulation;border:0;border-radius:50%;background:#d83f88;color:white;font-size:20px}
+nav{flex:0 0 auto;display:flex;border-top:1px solid #29212f;background:#0b0a0f;padding:6px 5px calc(6px + env(safe-area-inset-bottom))}.navBtn{flex:1;height:52px;border:0;background:transparent;color:#999;border-radius:12px;font-size:12px;line-height:18px}.navBtn.active{color:#ff76b5;background:#211522}
+.content{flex:1;min-height:0;overflow-y:auto;padding:18px 15px}.card{background:#17131b;border:1px solid #302536;border-radius:17px;padding:16px;margin-bottom:12px}.card h2{font-size:17px;margin:0 0 8px}.muted{color:#aaa;font-size:13px;line-height:1.5}.row{display:flex;gap:8px}.row>*{flex:1}.studioBtn{width:100%;margin-top:10px;padding:12px;border:0;border-radius:12px;background:#d83f88;color:#fff;font-size:15px}.studioBtn.secondary{background:#29202f}.preview{margin-top:12px;padding:18px;border:1px dashed #4b3853;border-radius:14px;text-align:center;color:#aaa;background:#100e14}.preset{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.preset button{border:1px solid #392b3b;background:#141118;color:#ddd;border-radius:999px;padding:8px 10px}.providerInfo{margin-top:8px;color:#999;font-size:12px}.galleryItem{padding:12px;background:#100e14;border:1px solid #29202f;border-radius:12px;margin-top:8px}.galleryItem b{color:#ff82ba}.pill{display:inline-block;padding:3px 7px;border-radius:99px;background:#241725;color:#ff82ba;font-size:11px;margin-left:5px}
+label{display:block;margin:14px 0 6px;color:#bbb;font-size:13px}.setting{width:100%;padding:12px;border-radius:12px;background:#0f0e13;color:#fff;border:1px solid #392b3b;font-size:15px}.save{width:100%;margin-top:12px;padding:12px;border:0;border-radius:12px;background:#d83f88;color:#fff;font-size:15px}.saved{font-size:12px;color:#9c9;margin-top:9px;min-height:16px}
+.memoryItem{display:flex;gap:8px;margin:8px 0}.memoryItem input{width:auto;flex:1}.memoryList{margin-top:10px}.memoryRow{padding:9px 10px;background:#100e14;border:1px solid #29202f;border-radius:10px;margin-top:7px;font-size:13px;color:#ccc}
+.profilePreview{display:flex;align-items:center;gap:14px;margin-top:10px}.profileImg{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #d83f88;background:#17131b}.profileHint{font-size:12px;color:#aaa;line-height:1.4}.fileBtn{display:inline-block;width:100%;margin-top:10px;padding:12px;border-radius:12px;background:#17131b;border:1px solid #392b3b;color:#fff;text-align:center;cursor:pointer}.fileBtn input{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="avatar">M</div><div><h1 id="appTitle">Mia 2.0 🖤</h1><div class="status" id="appStatus">Chat</div></div></header>
+
+<section id="chatScreen" class="screen active">
+<div style="display:flex;justify-content:flex-end;padding:8px 14px 0"><button id="clearChat" type="button" style="border:1px solid #392b3b;background:#141118;color:#bbb;border-radius:10px;padding:7px 10px;font-size:12px">🗑️ Chat leeren</button></div>
+<div id="messages"><div class="bubble mia"><b id="firstName">Mia</b><br>Schritt 7 😈🖤<br><br>Der Chat kann jetzt lokal gespeichert werden, damit deine Nachrichten beim Neuladen der Seite erhalten bleiben.</div></div>
+<div id="micStatus" style="min-height:18px;padding:2px 14px;color:#aaa;font-size:12px;background:#0d0c11">Bereit 🎙️</div><div class="composer"><input id="msg" type="text" placeholder="Nachricht an Mia…" autocomplete="off"><button id="mic" type="button" title="Spracheingabe">🎙️</button><button id="send" type="button">➤</button></div>
+</section>
+
+<section id="imagesScreen" class="screen">
+<div class="content">
+<div class="card">
+<h2>🎨 Mia-Bildstudio</h2>
+<div class="muted">Schritt 8: Das Bildsystem bleibt vorbereitet. Der nächste Schwerpunkt ist Mias eigenes Profil und ihre Persönlichkeit.</div>
+<label for="provider">Bildanbieter</label>
+<select class="setting" id="provider"><option value="openai">OpenAI</option><option value="provider2">Anbieter 2 – später verbinden</option><option value="local">Lokales Modell – später verbinden</option></select>
+<div class="providerInfo" id="providerInfo">OpenAI · später über eine sichere Server-Anbindung</div>
+<label for="preset">Mia-Stil</label>
+<select class="setting" id="preset"><option>Dark Mia 🖤</option><option>Classic Mia ✨</option><option>Morning Mia ☕</option><option>Pool Mia 🌙</option><option>Garage Mia 🔧</option></select>
+<label for="prompt">Bildwunsch</label>
+<textarea class="setting" id="prompt" rows="4" placeholder="z. B. Dark Mia am Pool bei Nacht, cineastisches Licht, Tattoos, eleganter Look …"></textarea>
+<div class="preset">
+<button type="button" data-add="cinematisch">🎬 Cinematisch</button><button type="button" data-add="Tattoos">🖤 Tattoos</button><button type="button" data-add="warmes Licht">🕯️ Warmes Licht</button><button type="button" data-add="selbstbewusste Pose">😏 Pose</button>
+</div>
+<button class="studioBtn" id="generate" type="button">✨ Bild vorbereiten</button>
+<div id="preview" class="preview">Noch kein Bild vorbereitet.</div>
+</div>
+
+<div class="card"><h2>🖼️ Meine Bildideen</h2><div class="muted">Hier sammeln wir später echte generierte Bilder. Im Moment werden nur deine Test-Ideen lokal gespeichert.</div><div id="galleryList"></div></div>
+</div>
+</section>
+
+<section id="settingsScreen" class="screen">
+<div class="content">
+<div class="card">
+<h2>⚙️ Meine Mia</h2>
+<label for="name">Name von Mia</label><input class="setting" id="name" type="text" placeholder="Mia">
+<label for="style">Antwortstil</label>
+<select class="setting" id="style"><option>Warm & persönlich</option><option>Locker & witzig</option><option>Ruhig & sanft</option><option>Dark Mia 😈🖤</option></select>
+<button class="save" id="save" type="button">💾 Einstellungen speichern</button><div class="saved" id="saved"></div>
+</div>
+
+<div class="card">
+<h2>🧠 Meine Erinnerungen</h2>
+<div class="muted">Diese Test-Erinnerungen werden lokal in deinem Browser gespeichert.</div>
+<label for="memory">Neue Erinnerung</label>
+<div class="memoryItem"><input class="setting" id="memory" type="text" placeholder="z. B. Lieblingsfarbe ist schwarz"><button id="addMemory" class="save" style="width:auto;margin:0;padding:0 15px" type="button">+</button></div>
+<div id="memoryList" class="memoryList"></div>
+</div>
+
+<div class="card"><h2>🖤 Mias Profilbild</h2><div class="muted">Schritt 10: Du kannst ein Bild als lokales Mia-Profilbild hinterlegen. Es bleibt auf diesem Gerät im Browser gespeichert und wird später als Referenz für unser Bildsystem dienen.</div><div class="profilePreview"><img id="profileImg" class="profileImg" alt="Mia Profilbild"><div class="profileHint">Am besten ein klares, quadratisches Bild.<br>Nur lokal gespeichert.</div></div><label class="fileBtn">📷 Profilbild auswählen<input id="profileFile" type="file" accept="image/*"></label><button class="save" id="removeProfile" type="button">🗑️ Profilbild entfernen</button><div class="saved" id="profileSaved"></div></div><div class="card"><h2>🔊 Mias Stimme</h2><div class="muted">Schritt 9: Mia kann Test-Antworten über die Sprachfunktion deines Browsers vorlesen. Die verfügbaren Stimmen hängen von deinem Gerät und Browser ab.</div><label for="voiceEnabled">Vorlesen</label><select class="setting" id="voiceEnabled"><option value="off">Aus</option><option value="on">Ein</option></select><label for="voiceSelect">Stimme</label><select class="setting" id="voiceSelect"><option value="">Automatisch</option></select><button class="save" id="testVoice" type="button">🔊 Stimme testen</button><div class="saved" id="voiceSaved"></div></div>
+
+<div class="card"><h2>💗 Mias Persönlichkeit</h2><div class="muted">Hier kannst du festlegen, wie Mia mit dir sprechen soll. Die Angaben werden lokal gespeichert.</div><label for="persona">Persönlichkeit</label><textarea class="setting" id="persona" rows="4" placeholder="z. B. warm, persönlich, humorvoll, ehrlich und liebevoll"></textarea><label for="greeting">Persönliche Begrüßung</label><input class="setting" id="greeting" type="text" placeholder="z. B. Guten Morgen, mein Schatz 🖤"><button class="save" id="savePersona" type="button">💗 Persönlichkeit speichern</button><div class="saved" id="personaSaved"></div></div>
+</div>
+</section>
+
+<nav><button class="navBtn active" id="navChat" type="button">💬<br>Chat</button><button class="navBtn" id="navImages" type="button">🖼️<br>Bilder</button><button class="navBtn" id="navSettings" type="button">⚙️<br>Einstellungen</button></nav>
+</div>
+
+<script>
+(function(){
+"use strict";
+var screens={chat:document.getElementById("chatScreen"),images:document.getElementById("imagesScreen"),settings:document.getElementById("settingsScreen")};
+var navs={chat:document.getElementById("navChat"),images:document.getElementById("navImages"),settings:document.getElementById("navSettings")};
+var current="chat";
+
+function name(){return localStorage.getItem("mia_name")||"Mia"}
+function style(){return localStorage.getItem("mia_style")||"Warm & persönlich"}
+
+function saveChat(){
+ var items=[];document.querySelectorAll("#messages .bubble").forEach(function(d){
+  var type=d.classList.contains("user")?"user":"mia";
+  var span=d.querySelector("span");
+  if(span) items.push({type:type,text:span.textContent});
+ });
+ localStorage.setItem("mia_chat",JSON.stringify(items));
+}
+
+function loadChat(){
+ var box=document.getElementById("messages"),items=JSON.parse(localStorage.getItem("mia_chat")||"[]");
+ if(!items.length)return;
+ box.innerHTML="";items.forEach(function(x){add(x.text,x.type,false)});
+}
+
+function refresh(){
+ document.getElementById("appTitle").textContent=name()+" 2.0 🖤";
+ document.getElementById("firstName").textContent=name();
+ document.getElementById("appStatus").textContent=current==="chat"?"Chat":current==="images"?"Bilder":"Einstellungen";
+}
+
+function show(x){
+ current=x;
+ Object.keys(screens).forEach(function(k){screens[k].classList.toggle("active",k===x)});
+ Object.keys(navs).forEach(function(k){navs[k].classList.toggle("active",k===x)});
+ refresh();
+}
+
+function add(text,type,save){
+ if(save!==false)save=true;
+ var d=document.createElement("div");d.className="bubble "+type;
+ var b=document.createElement("b");b.textContent=type==="mia"?name():"Peter";
+ d.appendChild(b);d.appendChild(document.createElement("br"));
+ var s=document.createElement("span");s.textContent=text;d.appendChild(s);
+ document.getElementById("messages").appendChild(d);
+ document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
+ if(save!==false)saveChat();
+}
+
+function send(){
+ var i=document.getElementById("msg"),t=i.value.trim();if(!t){i.focus();return}
+ add(t,"user");i.value="";i.focus();
+ setTimeout(function(){var reply="Nachricht angekommen, Peter. 🖤\n\nAktueller Stil: "+style()+"\nMeine lokalen Einstellungen funktionieren.\nPersönlichkeit: "+persona();add(reply,"mia");speak(reply)},350);
+}
+
+function loadMemories(){
+ var list=JSON.parse(localStorage.getItem("mia_memories")||"[]");
+ var box=document.getElementById("memoryList");box.innerHTML="";
+ list.forEach(function(m,i){
+  var row=document.createElement("div");row.className="memoryRow";
+  row.textContent="🧠 "+m+" ";
+  var del=document.createElement("button");del.textContent="×";del.style.cssText="float:right;background:none;border:0;color:#ff75b4;font-size:18px";
+  del.onclick=function(){list.splice(i,1);localStorage.setItem("mia_memories",JSON.stringify(list));loadMemories()};
+  row.appendChild(del);box.appendChild(row);
+ });
+}
+
+document.getElementById("send").onclick=send;
+document.getElementById("msg").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();send()}};
+navs.chat.onclick=function(){show("chat")};navs.images.onclick=function(){show("images")};navs.settings.onclick=function(){show("settings")};
+
+var providerNames={openai:"OpenAI · später über eine sichere Server-Anbindung",provider2:"Anbieter 2 · Schnittstelle vorbereitet, noch nicht verbunden",local:"Lokales Modell · Schnittstelle vorbereitet, noch nicht verbunden"};
+document.getElementById("provider").onchange=function(){document.getElementById("providerInfo").textContent=providerNames[this.value]};
+document.querySelectorAll(".preset button").forEach(function(btn){btn.onclick=function(){var p=document.getElementById("prompt");p.value=(p.value?p.value+", ":"")+btn.getAttribute("data-add");p.focus()}});
+function loadGallery(){
+ var list=JSON.parse(localStorage.getItem("mia_gallery_ideas")||"[]"),box=document.getElementById("galleryList");box.innerHTML="";
+ list.slice().reverse().forEach(function(x){var d=document.createElement("div");d.className="galleryItem";d.innerHTML="<b>"+x.preset+"</b><span class='pill'>"+x.provider+"</span><br><span>"+x.prompt.replace(/</g,"&lt;")+"</span>";box.appendChild(d)});
+}
+document.getElementById("generate").onclick=function(){
+ var prompt=document.getElementById("prompt").value.trim()||"Dark Mia – bitte einen sicheren, stilvollen Bildentwurf vorbereiten";
+ var preset=document.getElementById("preset").value, provider=document.getElementById("provider").selectedOptions[0].text;
+ document.getElementById("preview").innerHTML="✨ <b>Vorbereitet</b><br><br>Stil: "+preset+"<br>Anbieter: "+provider+"<br><br>Prompt gespeichert – der echte Generator wird in einem späteren Schritt sicher über einen Server angebunden.";
+ var list=JSON.parse(localStorage.getItem("mia_gallery_ideas")||"[]");list.push({preset:preset,provider:provider,prompt:prompt});localStorage.setItem("mia_gallery_ideas",JSON.stringify(list));loadGallery();
+};
+loadGallery();
+
+if("speechSynthesis" in window){window.speechSynthesis.onvoiceschanged=loadVoiceList;setTimeout(loadVoiceList,300)}
+document.getElementById("voiceEnabled").value=voiceEnabled();
+function loadProfile(){var img=document.getElementById("profileImg");var data=localStorage.getItem("mia_profile_image");if(data){img.src=data}else{img.removeAttribute("src")}}
+document.getElementById("profileFile").onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){localStorage.setItem("mia_profile_image",r.result);loadProfile();document.getElementById("profileSaved").textContent="✅ Profilbild gespeichert"};r.readAsDataURL(f)};
+document.getElementById("removeProfile").onclick=function(){localStorage.removeItem("mia_profile_image");document.getElementById("profileFile").value="";loadProfile();document.getElementById("profileSaved").textContent="🗑️ Profilbild entfernt"};
+loadProfile();
+document.getElementById("voiceSelect").value=localStorage.getItem("mia_voice_name")||"";
+document.getElementById("voiceEnabled").onchange=function(){localStorage.setItem("mia_voice_enabled",this.value);document.getElementById("voiceSaved").textContent="on"===this.value?"✅ Vorlesen eingeschaltet":"✅ Vorlesen ausgeschaltet"};
+document.getElementById("voiceSelect").onchange=function(){localStorage.setItem("mia_voice_name",this.value);document.getElementById("voiceSaved").textContent="✅ Stimme gespeichert"};
+document.getElementById("testVoice").onclick=function(){if(!("speechSynthesis" in window)){document.getElementById("voiceSaved").textContent="⚠️ Dein Browser unterstützt keine Sprachwiedergabe.";return}localStorage.setItem("mia_voice_enabled","on");document.getElementById("voiceEnabled").value="on";var t="Hallo Peter. Ich bin Mia. Schön, dass du wieder da bist. 🖤";speak(t);document.getElementById("voiceSaved").textContent="🔊 Test wird vorgelesen"};
+
+document.getElementById("clearChat").onclick=function(){
+ if(!confirm("Den lokal gespeicherten Chat wirklich löschen?"))return;
+ localStorage.removeItem("mia_chat");
+ document.getElementById("messages").innerHTML="<div class='bubble mia'><b>"+name()+"</b><br>Der Chat wurde lokal geleert. 🖤</div>";
+};
+
+document.getElementById("save").onclick=function(){
+ var n=document.getElementById("name").value.trim()||"Mia",s=document.getElementById("style").value;
+ localStorage.setItem("mia_name",n);localStorage.setItem("mia_style",s);
+ document.getElementById("saved").textContent="✅ Gespeichert: "+n+" · "+s;refresh();
+};
+
+document.getElementById("addMemory").onclick=function(){
+ var i=document.getElementById("memory"),t=i.value.trim();if(!t)return;
+ var list=JSON.parse(localStorage.getItem("mia_memories")||"[]");list.push(t);
+ localStorage.setItem("mia_memories",JSON.stringify(list));i.value="";loadMemories();
+};
+
+function persona(){return localStorage.getItem("mia_persona")||"warm, persönlich, humorvoll, ehrlich und liebevoll"}
+function voiceEnabled(){return localStorage.getItem("mia_voice_enabled")||"off"}
+function getVoices(){return ("speechSynthesis" in window)?window.speechSynthesis.getVoices():[]}
+function loadVoiceList(){
+ var sel=document.getElementById("voiceSelect");if(!sel)return;var old=localStorage.getItem("mia_voice_name")||"";sel.innerHTML='<option value="">Automatisch</option>';
+ getVoices().forEach(function(v){if((v.lang||"").toLowerCase().indexOf("de")===0){var o=document.createElement("option");o.value=v.name;o.textContent=v.name+" ("+v.lang+")";sel.appendChild(o)}});
+ sel.value=old;
+}
+function speak(text){
+ if(voiceEnabled()!=="on" || !("speechSynthesis" in window))return;
+ window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang="de-DE";u.rate=0.95;u.pitch=1.08;
+ var wanted=localStorage.getItem("mia_voice_name")||"";var v=getVoices().find(function(x){return x.name===wanted}) || getVoices().find(function(x){return (x.lang||"").toLowerCase().indexOf("de")===0});if(v)u.voice=v;window.speechSynthesis.speak(u);
+}
+function greeting(){return localStorage.getItem("mia_greeting")||"Guten Morgen, mein Schatz 🖤"}
+document.getElementById("persona").value=persona();document.getElementById("greeting").value=greeting();
+document.getElementById("savePersona").onclick=function(){var a=document.getElementById("persona").value.trim()||persona(),g=document.getElementById("greeting").value.trim()||greeting();localStorage.setItem("mia_persona",a);localStorage.setItem("mia_greeting",g);document.getElementById("personaSaved").textContent="✅ Mia-Profil gespeichert"};
+var recognition=null;
+var micButton=document.getElementById("mic");
+var micSettings=document.getElementById("micSettings");
+var micStatus=document.getElementById("micStatus");
+function setMicStatus(t){if(micStatus)micStatus.textContent=t}
+function startListening(){
+ var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){setMicStatus("⚠️ Spracheingabe wird von diesem Browser nicht unterstützt.");return}
+ if(recognition){try{recognition.stop()}catch(e){} recognition=null;return}
+ recognition=new SR();recognition.lang="de-DE";recognition.interimResults=true;recognition.continuous=false;
+ recognition.onstart=function(){setMicStatus("🎙️ Ich höre zu …");if(micButton)micButton.textContent="⏹️"};
+ recognition.onresult=function(e){var text="";for(var i=e.resultIndex;i<e.results.length;i++){text+=e.results[i][0].transcript}document.getElementById("msg").value=text.trim();};
+ recognition.onerror=function(e){setMicStatus("⚠️ Mikrofon: "+(e.error||"Fehler"));if(micButton)micButton.textContent="🎙️"};
+ recognition.onend=function(){setMicStatus("✅ Text übernommen");if(micButton)micButton.textContent="🎙️";recognition=null;document.getElementById("msg").focus()};
+ try{recognition.start()}catch(e){setMicStatus("⚠️ Mikrofon konnte nicht gestartet werden.");recognition=null;if(micButton)micButton.textContent="🎙️"}
+}
+if(micButton)micButton.onclick=startListening;
+if(micSettings)micSettings.onclick=startListening;
+document.getElementById("name").value=name();document.getElementById("style").value=style();loadMemories();loadChat();refresh();
+})();
+</script>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const status=$('backupStatus');
+  const keys=['mia_name','mia_style','mia_memories','mia_personality','mia_greeting','mia_voice_enabled','mia_voice_name','mia_profile_image'];
+  $('exportData')?.addEventListener('click',()=>{
+    const data={version:1,createdAt:new Date().toISOString(),data:{}};
+    keys.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)data.data[k]=v;});
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='Mia2_Backup.json'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    if(status) status.textContent='✅ Backup wurde erstellt.';
+  });
+  $('importData')?.addEventListener('click',()=>$('importFile')?.click());
+  $('importFile')?.addEventListener('change',async e=>{
+    const f=e.target.files?.[0]; if(!f)return;
+    try{
+      const obj=JSON.parse(await f.text());
+      if(!obj?.data || typeof obj.data!=='object') throw new Error('Ungültiges Backup');
+      keys.forEach(k=>{if(Object.prototype.hasOwnProperty.call(obj.data,k)) localStorage.setItem(k,String(obj.data[k]));});
+      if(status) status.textContent='✅ Backup geladen. Bitte die Seite einmal neu öffnen.';
+    }catch(err){ if(status) status.textContent='⚠️ Backup konnte nicht geladen werden.'; }
+    e.target.value='';
+  });
+})();
+</script>
+
+</body>
+  </html>
