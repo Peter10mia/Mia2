@@ -133,7 +133,7 @@ function add(text,type,save){
 function send(){
  var i=document.getElementById("msg"),t=i.value.trim();if(!t){i.focus();return}
  add(t,"user");i.value="";i.focus();
- setTimeout(function(){var reply="Nachricht angekommen, Peter. 🖤\n\nAktueller Stil: "+style()+"\nMeine lokalen Einstellungen funktionieren.\nPersönlichkeit: "+persona();add(reply,"mia");speak(reply)},350);
+ fetch("https://cold-paper-f5f8.peter-busch3.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,history:JSON.parse(localStorage.getItem("mia_chat")||"[]").slice(-21,-1).map(function(x){return {role:x.type,text:x.text}})})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Backend-Fehler");return d})}).then(function(d){add(d.reply||"Mia hat gerade keine Antwort geliefert.","mia");speak(d.reply||"")}).catch(function(e){add("⚠️ Mia-Backend: "+e.message,"mia")});
 }
 
 function loadMemories(){
